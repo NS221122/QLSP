@@ -1,4 +1,4 @@
-import  {React, useState,useRef,useEffect } from 'react';
+import  {React, useState,useRef,useEffect,selectedRecord } from 'react';
 import { Form,Button, Modal,Input, InputNumber ,message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -37,13 +37,16 @@ function ModalTCSP(props) {
 <Modal
         open={props.visible}
         onOk={onSave}
-        title={props.action == "Them" ? "Thêm sản phẩm":"Cập Nhật Thông Tin Sản Phẩm"}
+        title={props.action === "Them" ? "Thêm sản phẩm":"Cập Nhật Thông Tin Sản Phẩm" }
         onCancel={props.onCancel}
+
         footer={[
           <Button key="back" onClick={props.hiddenModal}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={onSave}>
+          <Button key="submit" type="primary" 
+          onClick={onSave}
+          >
             OK
           </Button>,
          
@@ -73,9 +76,8 @@ function ModalTCSP(props) {
         </Form.Item>
       </Form>
       </Modal>
-
+      <></>
         </>
     );
 }
-
 export default ModalTCSP;

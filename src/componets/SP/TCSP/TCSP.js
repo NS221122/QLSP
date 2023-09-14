@@ -1,7 +1,6 @@
 import {React,useState,useEffect } from 'react';
-import { Cascader,Image ,Button, Layout,Table,Input,message,Popconfirm } from "antd";
+import { Cascader,Image ,Button, Layout,Table,Input,message,Popconfirm, Select, Space } from "antd";
 import ModalTCSP from './modalTCSP';
-
 import {
   
   DeleteOutlined,
@@ -11,8 +10,13 @@ import {
 import axios from "axios";
 const {  Content } = Layout;
 const { Search } = Input;
+//
 
-const onSearch = (value) => console.log(value);
+//
+const handleChange = (value) => {
+  console.log(`selected ${value}`);
+};
+//
 function TCSP(props) {
 
 
@@ -20,7 +24,7 @@ const [VisibleModal, setVisibleModal]= useState(false);
 const [Action, setAction]= useState();
 const [DanhsachSanPham, setDanhsachSanPham] = useState([]);
 const [DataEdit, setDataEdit] = useState();
-
+const [search, setSerch] = useState();
 
 function getDanhsachSanPham() {
     axios.get("https://localhost:7177/api/SP/DanhSachSP?page=1")
@@ -32,7 +36,7 @@ function getDanhsachSanPham() {
         console.log(error);
       });
   }
-  function themmoiSP(dataSP) {
+  function themSP(dataSP) {
     axios.post("https://localhost:7177/api/SP/ThemSP",dataSP)
       .then((res) => {
         if(res.data.Status>= 1){
@@ -50,7 +54,7 @@ function getDanhsachSanPham() {
     axios.put("https://localhost:7177/api/SP/SuaSP",dataSP)
       .then((res) => {
         if(res.data.Status>= 1){
-            message.success(res.data.message); 
+          message.success(res.data.message); 
         }
         else{
           message.error(res.data.message);
@@ -69,9 +73,7 @@ function getDanhsachSanPham() {
     setVisibleModal(true);
     setAction("Them");
     setDataEdit(null);
-  
   }
-  
   function showEdit(data){
     setVisibleModal(true);
     setAction("Sua");
@@ -84,9 +86,10 @@ function getDanhsachSanPham() {
   function onCancel() {
     setVisibleModal(false);
   }
+
   async function save(dataSP){
           if(Action==="Them"){
-              await themmoiSP(dataSP);
+              await themSP(dataSP);
           }
           else{
             await suaSP(dataSP);
@@ -108,13 +111,28 @@ function getDanhsachSanPham() {
         console.log(error);
       });
   }
- 
-
-
+ //??????
+ async function onSearch (tenSP) {
+    axios.post("https://localhost:7177/api/SP/TimKiemSP?name=" + tenSP)
+    .then((res) => {
+      if (tenSP === " ") {
+        getDanhsachSanPham();
+      } 
+      else{
+       setDanhsachSanPham(res.data.data);
+      console.log(res.data.data);
+    }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  };
+  
   function renderThaoTac(data){
       return(
         <>
-          <EyeOutlined style={{fontSize: "18px", cursor: "pointer",marginRight:"21px",color: "#1677ff" }}/>
+          <EyeOutlined style={{fontSize: "18px", cursor: "pointer",marginRight:"21px",color: "#1677ff" }}
+          />
           <EditOutlined
             style={{fontSize: "18px", cursor: "pointer",marginRight:"21px",color: "#1677ff"}}
               onClick={()=> showEdit(data)}
@@ -197,10 +215,47 @@ function getDanhsachSanPham() {
               
             }}
           >
-          <Search placeholder="Tìm kiếm theo hiển thị" onSearch={onSearch} enterButton style={{width: 300,
-        float: 'right',}}/>
           <Button type='primary' onClick={()=>showAdd()} style={{marginBottom:"5px" }}><PlusOutlined />Thêm sản phẩm</Button>
-          <Table dataSource={DanhsachSanPham} columns={columns} bordered />;
+          <Select
+      defaultValue="Tất Cả"
+      style={{
+        width: 140,
+        marginLeft:13,
+      }}
+      onChange={handleChange}
+      options={[
+        {
+          value: 'Xe Cộ',
+          label: 'Xe Cộ',
+        },
+        {
+          value: 'Đồ Điện Tử',
+          label: 'Đồ Điện Tử',
+        },
+        {
+          value: 'Nước Hoa',
+          label: 'Nước Hoa',
+        },
+        {
+          value: 'Mỹ Phẩm',
+          label: 'Mỹ Phẩm',
+         
+        },
+      ]}
+    />
+
+          <Search 
+          placeholder="Nhập tên sản phẩm"
+            allowClear
+            size="large"
+           onSearch={onSearch} 
+           enterButton 
+            style={{
+              
+              width: 300,
+            float: 'right',}}/>
+
+          <Table dataSource={DanhsachSanPham} rowKey={(data)=> data.mSanPham} columns={columns} bordered />;
           
           </Content>
           <ModalTCSP visible={VisibleModal}

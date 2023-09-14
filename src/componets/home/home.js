@@ -3,6 +3,7 @@
   import React from "react";
   import "../../style/mycss.css";
   import MenuEdit from "../../menu/index";
+  import Dangxuat from "./dangxuat";
 import { Outlet } from "react-router-dom";
   const { Header, Content, Sider } = Layout;
 
@@ -18,11 +19,19 @@ function home(props) {
           }}
         >
         <Header className="header, titleMain" style={{ 
+          
           height: 63,
           background: "#ffff",
            }}>
-        <div className="logo" />
-        <div className="tieude">HỆ THỐNG QUẢN LÝ</div>
+        <div className="tieude"
+        style={{ 
+          display: "flex",
+          justifyContent: "center",
+           }}
+        >HỆ THỐNG QUẢN LÝ</div>
+        
+        <Dangxuat/>
+        
       </Header>          
            <Outlet/>
         </Layout>
